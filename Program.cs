@@ -1,6 +1,4 @@
-﻿using System;
-
-Random random = new Random();
+﻿Random random = new();
 Console.CursorVisible = false;
 int height = Console.WindowHeight - 1;
 int width = Console.WindowWidth - 5;
@@ -15,8 +13,8 @@ int foodX = 0;
 int foodY = 0;
 
 // Available player and food strings
-string[] states = { "('-')", "(^-^)", "(X_X)" };
-string[] foods = { "@@@@@", "$$$$$", "#####" };
+string[] states = ["('-')", "(^-^)", "(X_X)"];
+string[] foods = ["@@@@@", "$$$$$", "#####"];
 
 // Current player string displayed in the Console
 string player = states[0];
@@ -62,7 +60,7 @@ void ChangePlayer()
 // Temporarily stops the player from moving
 void FreezePlayer()
 {
-    System.Threading.Thread.Sleep(1000);
+    Thread.Sleep(1000);
     player = states[0];
 }
 
@@ -118,12 +116,32 @@ void Move(bool directionOnly = false)
     }
 
     // Keep player position within the bounds of the Terminal window
-    playerX = (playerX < 0) ? 0 : (playerX >= width ? width : playerX);
-    playerY = (playerY < 0) ? 0 : (playerY >= height ? height : playerY);
+    playerX = (playerX < 0)
+        ? 0
+        : (playerX >= width
+            ? width
+            : playerX);
+
+    playerY = (playerY < 0)
+        ? 0
+        : (playerY >= height
+            ? height
+            : playerY);
 
     // Draw the player at the new location
     Console.SetCursorPosition(playerX, playerY);
     Console.Write(player);
+
+    if (HasColided())
+    {
+        ChangePlayer();
+        ShowFood();
+    }
+}
+
+bool HasColided()
+{
+    return (playerX == foodX) && (playerY == foodY);
 }
 
 // Clears the console, displays the food and player

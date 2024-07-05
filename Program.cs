@@ -22,10 +22,12 @@ string player = states[0];
 // Index of the current food
 int food = 0;
 
+int moveSpeed = 1;
+
 InitializeGame();
 while (!shouldExit)
 {
-    Move(directionOnly: true);
+    Move(true, moveSpeed);
 }
 
 // Returns true if the Terminal was resized 
@@ -65,7 +67,7 @@ void FreezePlayer()
 }
 
 // Reads directional input from the Console and moves the player
-void Move(bool directionOnly = false)
+void Move(bool directionOnly = false, int moveSpeed = 1)
 {
     int lastX = playerX;
     int lastY = playerY;
@@ -73,20 +75,25 @@ void Move(bool directionOnly = false)
     switch (Console.ReadKey(true).Key)
     {
         case ConsoleKey.UpArrow:
-            playerY--;
+            playerY -= moveSpeed;
             break;
+
         case ConsoleKey.DownArrow:
-            playerY++;
+            playerY += moveSpeed;
             break;
+
         case ConsoleKey.LeftArrow:
-            playerX--;
+            playerX -= moveSpeed;
             break;
+
         case ConsoleKey.RightArrow:
-            playerX++;
+            playerX += moveSpeed;
             break;
+
         case ConsoleKey.Escape:
             shouldExit = true;
             break;
+
         default:
             if (directionOnly)
             {
@@ -136,12 +143,26 @@ void Move(bool directionOnly = false)
     {
         ChangePlayer();
         ShowFood();
+        HandleState();
     }
 }
 
 bool HasColided()
 {
     return (playerX == foodX) && (playerY == foodY);
+}
+
+void HandleState()
+{
+    if (player == states[2])
+    {
+        FreezePlayer();
+        moveSpeed = 1;
+    }
+    else if (player == states[1])
+        moveSpeed = 3;
+    else
+        moveSpeed = 1;
 }
 
 // Clears the console, displays the food and player
